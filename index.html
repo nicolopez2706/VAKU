@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>VAKU Estudio · Collares de cerámica hechos a mano</title>
+  <meta name="description" content="Collares artesanales de cerámica unisex, hechos a mano en Córdoba. Piezas únicas inspiradas en los cuatro elementos: fuego, agua, aire y tierra." />
+  <meta name="theme-color" content="#86725F" />
+  <meta property="og:title" content="VAKU Estudio · Portador de esencia" />
+  <meta property="og:description" content="Collares de cerámica unisex, hechos a mano en Córdoba." />
+  <meta property="og:image" content="img/og.jpg" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="apple-touch-icon" href="img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="img/sun-puesto.webp" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <!-- Pantalla de carga -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <img src="img/logo-white.png" alt="" class="loader__logo" />
+  </div>
+
+  <div class="cursor" aria-hidden="true"><span></span></div>
+
+  <!-- Barra de anuncios (texto desde la planilla) -->
+  <div class="announce" id="announce">
+    <div class="announce__track" id="announceTrack">
+      <span>Hecho a mano en Córdoba</span><span>Envíos a todo el país</span><span>Cada pieza es única</span>
+    </div>
+  </div>
+
+  <header class="nav" id="nav">
+    <a href="#inicio" class="nav__logo" aria-label="VAKU, inicio">
+      <img src="img/logo.png" alt="VAKU Estudio" width="120" height="63" />
+    </a>
+    <nav class="nav__links" aria-label="Principal">
+      <a href="#coleccion">Colección</a>
+      <a href="#elementos">Elementos</a>
+      <a href="#historia">Historia</a>
+      <a href="#a-pedido">A pedido</a>
+    </nav>
+    <button class="nav__cart" id="cartBtn" aria-label="Abrir carrito">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+      <span class="nav__cart-label">Carrito</span>
+      <span class="nav__count" id="cartCount">0</span>
+    </button>
+    <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#coleccion">Colección</a>
+    <a href="#elementos">Elementos</a>
+    <a href="#historia">Historia</a>
+    <a href="#a-pedido">A pedido</a>
+  </div>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+      <svg class="blob blob--1" viewBox="0 0 200 200" aria-hidden="true"><path d="M43.5,-58.6C55.6,-50.5,64,-36.5,68.4,-21.3C72.8,-6.1,73.2,10.3,67.1,23.7C61,37.1,48.4,47.5,34.6,55.4C20.8,63.3,5.8,68.7,-9.9,69.4C-25.6,70,-42,66,-53.5,56C-65,46,-71.6,30,-73,13.7C-74.4,-2.6,-70.6,-19.2,-62,-32.3C-53.4,-45.4,-40,-55,-26.1,-62.4C-12.2,-69.8,2.2,-75,16.1,-72.6C30,-70.2,31.4,-66.7,43.5,-58.6Z" transform="translate(100 100)"/></svg>
+      <svg class="blob blob--2" viewBox="0 0 200 200" aria-hidden="true"><path d="M38.9,-51.3C49.2,-45.6,55.5,-32.6,60.7,-18.4C65.9,-4.2,70,11.2,65.4,23.6C60.8,36,47.4,45.4,33.5,53.4C19.6,61.4,5.1,68,-10.4,69.1C-25.9,70.2,-42.4,65.8,-52.9,55C-63.4,44.2,-67.9,27,-68.9,10.3C-69.9,-6.4,-67.4,-22.6,-58.9,-34.3C-50.4,-46,-35.9,-53.2,-22.3,-57.5C-8.7,-61.8,4,-63.2,16.4,-60.8C28.8,-58.4,28.6,-57,38.9,-51.3Z" transform="translate(100 100)"/></svg>
+
+      <div class="hero__text">
+        <p class="eyebrow reveal-up" style="--d:.1s">Collares de cerámica · Hechos a mano en Córdoba</p>
+        <h1 class="hero__title">
+          <span class="line"><span style="--d:.2s">Portador</span></span>
+          <span class="line"><span style="--d:.35s"><em>de esencia</em></span></span>
+        </h1>
+        <p class="hero__lead reveal-up" style="--d:.55s">Piezas únicas de arcilla, modeladas a mano para quien quiera decir algo sin palabras. Hombre, mujer, quien sea.</p>
+        <div class="hero__ctas reveal-up" style="--d:.7s">
+          <a href="#coleccion" class="btn btn--dark magnetic">Ver colección</a>
+          <a href="#a-pedido" class="btn btn--ghost magnetic">Hacé el tuyo</a>
+        </div>
+      </div>
+
+      <div class="hero__media" id="heroMedia">
+        <figure class="hero__img hero__img--main" data-depth="0.04">
+          <img src="img/sun-puesto.webp" alt="Collar SUN amarillo puesto sobre un sweater gris" />
+        </figure>
+        <figure class="hero__img hero__img--b" data-depth="0.09">
+          <img src="img/halo-madera.webp" alt="Collares HALO de cerámica sobre madera" />
+        </figure>
+        <figure class="hero__img hero__img--c" data-depth="0.13">
+          <img src="img/sol-arena.webp" alt="Estrellas SUN de colores sobre arena" />
+        </figure>
+        <div class="hero__badge" data-depth="0.18">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <defs><path id="circ" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" /></defs>
+            <text><textPath href="#circ" textLength="284" lengthAdjust="spacing">HECHO A MANO · PIEZA ÚNICA · CERÁMICA ·</textPath></text>
+          </svg>
+          <span class="hero__badge-star">✺</span>
+        </div>
+      </div>
+
+      <a href="#historia" class="hero__scroll" aria-label="Bajar"><span></span></a>
+    </section>
+
+    <!-- TICKER -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        <span>Fuego</span><i>✺</i><span>Agua</span><i>∿</i><span>Aire</span><i>◎</i><span>Tierra</span><i>▲</i>
+        <span>Fuego</span><i>✺</i><span>Agua</span><i>∿</i><span>Aire</span><i>◎</i><span>Tierra</span><i>▲</i>
+      </div>
+    </div>
+
+    <!-- HISTORIA / MANIFIESTO -->
+    <section class="manifesto" id="historia">
+      <div class="manifesto__grid">
+        <div class="manifesto__copy">
+          <p class="eyebrow reveal">Nuestra historia</p>
+          <p class="manifesto__big" id="manifestoText">La cerámica no tiene género. El arte no tiene género. La expresión no tiene género.</p>
+          <div class="manifesto__body reveal">
+            <p>VAKU nace de una pregunta simple: ¿por qué los collares artesanales de cerámica están pensados para un público específico? Un collar de arcilla hecho a mano es para quien quiera llevarlo.</p>
+            <p>Lo importante no es quién lo usa, sino <strong>qué dice de vos</strong>. El nombre viene de raíces antiguas y significa <em>“portador de esencia”</em>, porque cada persona lleva algo único que merece ser visible.</p>
+          </div>
+        </div>
+        <figure class="manifesto__img reveal-clip">
+          <img src="img/piezas-crudas.webp" alt="Decenas de dijes de cerámica cruda antes del esmalte" loading="lazy" />
+          <figcaption>Antes del horno · Tanda 3</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ELEMENTOS -->
+    <section class="elements" id="elementos">
+      <div class="section-head">
+        <p class="eyebrow reveal">La historia que olvidamos</p>
+        <h2 class="reveal">Todo lo que somos viene de <em>cuatro fuerzas</em></h2>
+      </div>
+      <div class="elements__grid" id="elementsGrid">
+        <article class="element reveal" data-el="Fuego" style="--d:0s">
+          <svg class="element__icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6c3 10 14 15 14 30a14 14 0 0 1-28 0c0-7 4-11 7-14 0 6 3 9 6 9-2-9 1-18 1-25Z"/><path d="M32 52a6 6 0 0 1-6-6c0-4 3-6 6-9 3 3 6 5 6 9a6 6 0 0 1-6 6Z"/></svg>
+          <h3>Fuego</h3>
+          <p>Nos hace crear. Destruir lo viejo, forjar lo nuevo. Transformarnos cuando todo parece perdido.</p>
+          <span class="element__week" hidden></span>
+          <button class="element__link" data-filter="Fuego">Ver collares →</button>
+        </article>
+        <article class="element reveal" data-el="Agua" style="--d:.1s">
+          <svg class="element__icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 24c6-6 10-6 16 0s10 6 16 0 10-6 16 0"/><path d="M8 34c6-6 10-6 16 0s10 6 16 0 10-6 16 0"/><path d="M8 44c6-6 10-6 16 0s10 6 16 0 10-6 16 0"/></svg>
+          <h3>Agua</h3>
+          <p>Nos enseña a fluir. A ser profundos, a adaptarnos sin perder nuestra esencia. Libres como el océano.</p>
+          <span class="element__week" hidden></span>
+          <button class="element__link" data-filter="Agua">Ver collares →</button>
+        </article>
+        <article class="element reveal" data-el="Aire" style="--d:.2s">
+          <svg class="element__icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 32a3 3 0 0 1 6 0 6 6 0 0 1-12 0 9 9 0 0 1 18 0 12 12 0 0 1-24 0 15 15 0 0 1 30 0"/></svg>
+          <h3>Aire</h3>
+          <p>Nos impulsa a movernos. A no quedarnos. A ser nómadas de nuestra propia vida y cambiar sin miedo.</p>
+          <span class="element__week" hidden></span>
+          <button class="element__link" data-filter="Aire">Ver collares →</button>
+        </article>
+        <article class="element reveal" data-el="Tierra" style="--d:.3s">
+          <svg class="element__icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 10 54 48H10L32 10Z"/><path d="M18 56h28"/><path d="M24 40h16"/><path d="M28 30h8"/></svg>
+          <h3>Tierra</h3>
+          <p>Nos da raíces. Nos conecta con lo ancestral, nos sostiene cuando todo se mueve y nos recuerda de dónde venimos.</p>
+          <span class="element__week" hidden></span>
+          <button class="element__link" data-filter="Tierra">Ver collares →</button>
+        </article>
+      </div>
+    </section>
+
+    <!-- PROMO ELEMENTO DE LA SEMANA (se muestra si está activo en la planilla) -->
+    <section class="weekly" id="weekly" hidden>
+      <div class="weekly__inner reveal">
+        <p class="eyebrow">Elemento de la semana</p>
+        <h2 id="weeklyTitle">Tierra</h2>
+        <p id="weeklyText">Esta semana los collares de este elemento tienen precio especial.</p>
+        <button class="btn btn--light magnetic" id="weeklyBtn">Ver collares</button>
+      </div>
+    </section>
+
+    <!-- COLECCIÓN -->
+    <section class="collection" id="coleccion">
+      <div class="section-head section-head--row">
+        <div>
+          <p class="eyebrow reveal">Disponibles</p>
+          <h2 class="reveal">La colección</h2>
+        </div>
+        <div class="filters reveal" id="filters" role="tablist" aria-label="Filtrar por elemento">
+          <button class="chip is-active" data-filter="all">Todos</button>
+          <button class="chip" data-filter="Fuego">Fuego</button>
+          <button class="chip" data-filter="Agua">Agua</button>
+          <button class="chip" data-filter="Aire">Aire</button>
+          <button class="chip" data-filter="Tierra">Tierra</button>
+        </div>
+      </div>
+      <div class="grid" id="grid" aria-live="polite">
+        <div class="card card--skeleton"></div><div class="card card--skeleton"></div><div class="card card--skeleton"></div>
+      </div>
+      <p class="grid__empty" id="gridEmpty" hidden>Por ahora no hay collares de este elemento. ¡Escribinos y lo hacemos a pedido!</p>
+    </section>
+
+    <!-- A PEDIDO -->
+    <section class="custom" id="a-pedido">
+      <figure class="custom__img reveal-clip">
+        <img src="img/pedido.webp" alt="Dijes de cerámica cruda con formas de estrella, gota y espiral" loading="lazy" />
+      </figure>
+      <div class="custom__copy">
+        <p class="eyebrow reveal">Collares a pedido</p>
+        <h2 class="reveal">Me mandás la idea, <em>lo hacemos</em>.</h2>
+        <ol class="steps">
+          <li class="reveal" style="--d:.05s"><span>01</span><div><h3>Contanos tu idea</h3><p>Una forma, un símbolo, un recuerdo. Mandanos una foto o un dibujo.</p></div></li>
+          <li class="reveal" style="--d:.15s"><span>02</span><div><h3>Elegí colores</h3><p>Esmalte, textura y color de hilo. Lo definimos juntos.</p></div></li>
+          <li class="reveal" style="--d:.25s"><span>03</span><div><h3>Modelado y horno</h3><p>Lo hacemos a mano, pieza por pieza, y te lo enviamos.</p></div></li>
+        </ol>
+        <a href="#" class="btn btn--dark magnetic reveal" id="customBtn" target="_blank" rel="noopener">Pedir el mío por WhatsApp</a>
+      </div>
+    </section>
+
+    <!-- GALERÍA -->
+    <section class="gallery" aria-label="Galería">
+      <div class="section-head section-head--center">
+        <p class="eyebrow reveal">Así quedan</p>
+        <h2 class="reveal">Llevalo con <em>vos</em></h2>
+      </div>
+      <div class="gallery__rail">
+        <div class="gallery__track" id="galleryTrack">
+          <img src="img/sun-camisa.webp" alt="Collar SUN sobre camisa negra" loading="lazy" />
+          <img src="img/retrato.webp" alt="Persona usando un collar VAKU" loading="lazy" />
+          <img src="img/koru-madera.webp" alt="Collares KORU sobre madera" loading="lazy" />
+          <img src="img/sun-mano.webp" alt="Collar SUN puesto" loading="lazy" />
+          <img src="img/coleccion-mesa.webp" alt="Colección completa sobre tela gris" loading="lazy" />
+          <img src="img/eslabon-camisa.webp" alt="Collar ESLABÓN sobre camisa a cuadros" loading="lazy" />
+          <img src="img/sol-arena.webp" alt="Estrellas SUN sobre arena" loading="lazy" />
+          <img src="img/sun-mano-2.webp" alt="Mano sosteniendo un dije SUN" loading="lazy" />
+        </div>
+      </div>
+      <div class="gallery__cta reveal">
+        <a href="https://www.instagram.com/vaku.estudio/" id="igLink" class="link-underline" target="_blank" rel="noopener">Seguinos en Instagram · @vaku.estudio</a>
+      </div>
+    </section>
+
+    <!-- INFO -->
+    <section class="info">
+      <div class="info__item reveal" style="--d:0s">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 30c0-8 4-16 10-16s10 8 10 16a10 10 0 0 1-20 0Z"/><path d="M24 14V6"/></svg>
+        <h3>Hecho a mano</h3><p>Cada pieza se modela y esmalta a mano en Córdoba. Ninguna es igual a otra.</p>
+      </div>
+      <div class="info__item reveal" style="--d:.1s">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 14h24v18H6z"/><path d="M30 20h7l5 6v6H30"/><circle cx="14" cy="35" r="3"/><circle cx="35" cy="35" r="3"/></svg>
+        <h3>Envíos</h3><p id="shippingInfo">Coordinamos el envío por WhatsApp. Retiro sin cargo en Córdoba.</p>
+      </div>
+      <div class="info__item reveal" style="--d:.2s">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 40C16 28 32 20 40 8"/><path d="M10 12c8 2 18 10 22 26"/></svg>
+        <h3>Elegí tu hilo</h3><p>Hilo encerado regulable en el color que más te guste.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <img src="img/logo-white.png" alt="VAKU Estudio" class="footer__logo" loading="lazy" />
+      <p class="footer__claim">Lo importante no es quién lo usa,<br />sino <em>qué dice de vos</em>.</p>
+    </div>
+    <div class="footer__bottom">
+      <p>Córdoba, Argentina</p>
+      <nav>
+        <a href="https://www.instagram.com/vaku.estudio/" id="igFooter" target="_blank" rel="noopener">Instagram</a>
+        <a href="#" id="waFooter" target="_blank" rel="noopener">WhatsApp</a>
+      </nav>
+      <p>© <span id="year"></span> VAKU Estudio</p>
+    </div>
+  </footer>
+
+  <!-- CARRITO -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer" aria-label="Carrito" aria-hidden="true">
+    <div class="drawer__head">
+      <h2>Tu carrito</h2>
+      <button class="icon-btn" id="drawerClose" aria-label="Cerrar carrito">✕</button>
+    </div>
+    <div class="drawer__body" id="cartItems"></div>
+    <div class="drawer__foot" id="cartFoot">
+      <form class="code" id="codeForm" autocomplete="off">
+        <input type="text" id="codeInput" placeholder="Código de descuento" aria-label="Código de descuento" />
+        <button type="submit">Aplicar</button>
+      </form>
+      <p class="code__msg" id="codeMsg" role="status"></p>
+      <dl class="totals">
+        <div><dt>Subtotal</dt><dd id="subtotal">$0</dd></div>
+        <div class="totals__discount" id="discountRow" hidden><dt id="discountLabel">Descuento</dt><dd id="discount">-$0</dd></div>
+        <div class="totals__total"><dt>Total</dt><dd id="total">$0</dd></div>
+      </dl>
+      <form class="checkout" id="checkoutForm">
+        <input type="text" name="nombre" placeholder="Tu nombre" required aria-label="Tu nombre" />
+        <div class="checkout__opts" role="radiogroup" aria-label="Entrega">
+          <label><input type="radio" name="entrega" value="Envío" checked /> <span>Envío</span></label>
+          <label><input type="radio" name="entrega" value="Retiro en Córdoba" /> <span>Retiro en Córdoba</span></label>
+        </div>
+        <input type="text" name="ciudad" placeholder="Ciudad / localidad" aria-label="Ciudad" />
+        <textarea name="notas" rows="2" placeholder="¿Algo más? (opcional)" aria-label="Notas"></textarea>
+        <p class="checkout__ship" id="shippingCart"></p>
+        <button type="submit" class="btn btn--dark btn--full">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4a.5.5 0 0 0 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>
+          Enviar pedido por WhatsApp
+        </button>
+        <p class="checkout__note">Se abre WhatsApp con tu pedido listo para enviar. Ahí coordinamos el pago y la entrega.</p>
+      </form>
+    </div>
+  </aside>
+
+  <!-- DETALLE DE PRODUCTO -->
+  <dialog class="modal" id="modal" aria-labelledby="modalTitle">
+    <button class="icon-btn modal__close" id="modalClose" aria-label="Cerrar">✕</button>
+    <div class="modal__grid">
+      <div class="modal__gallery">
+        <div class="modal__main"><img id="modalImg" alt="" /></div>
+        <div class="modal__thumbs" id="modalThumbs"></div>
+      </div>
+      <div class="modal__info">
+        <p class="eyebrow" id="modalEl"></p>
+        <h2 id="modalTitle"></h2>
+        <p class="modal__price" id="modalPrice"></p>
+        <p class="modal__desc" id="modalDesc"></p>
+        <div class="modal__opt" id="modalThreadWrap">
+          <span>Color de hilo</span>
+          <div class="swatches" id="modalThreads"></div>
+        </div>
+        <div class="modal__actions">
+          <div class="qty"><button type="button" id="qtyMinus" aria-label="Menos">−</button><span id="qtyVal">1</span><button type="button" id="qtyPlus" aria-label="Más">+</button></div>
+          <button class="btn btn--dark" id="modalAdd">Agregar al carrito</button>
+        </div>
+        <p class="modal__status" id="modalStatus"></p>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="config.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
