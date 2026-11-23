@@ -11,9 +11,9 @@ Todo se hace en la planilla **“VAKU – Catálogo de la tienda”** de Google 
 | Pestaña | Para qué sirve |
 |---|---|
 | **Instrucciones** | Guía paso a paso. |
-| **Productos** | Un collar por fila: nombre, descripción, precio, precio oferta, elemento, estado, fotos. |
+| **Productos** | Un collar por fila: nombre, descripción, precio, precio oferta, elemento, estado, fotos, colores de la pieza y colores agotados. |
 | **Codigos** | Códigos de descuento: porcentaje o monto fijo, compra mínima y vencimiento. |
-| **Ajustes** | WhatsApp que recibe pedidos, Instagram, texto de la barra de arriba, elemento de la semana y su descuento, colores de hilo, texto de envíos. |
+| **Ajustes** | WhatsApp que recibe pedidos, Instagram, texto de la barra de arriba, elemento de la semana y su descuento, colores de hilo e hilos agotados, texto de envíos. |
 
 **Fotos:** subilas a la carpeta de Drive **“VAKU – Fotos de la tienda”**, copiá el vínculo (clic derecho > Compartir > Copiar vínculo) y pegalo en *Foto 1*, *Foto 2* o *Foto 3*. La carpeta y la planilla tienen que seguir compartidas como “Cualquier persona con el vínculo puede ver”, porque así la página puede leerlas.
 

@@ -13,7 +13,11 @@
     negro: "#1d1a18", marron: "#6b4a33", suela: "#b07a4a", rojo: "#b3352c", natural: "#e3d6c2",
     blanco: "#f4f1ec", beige: "#d9c6a8", gris: "#8a8a86", verde: "#5f7552", azul: "#3f5873",
     celeste: "#8fb3c9", amarillo: "#e2b23a", naranja: "#d77a3a", rosa: "#d99aa3", bordo: "#6e1f2a",
+    crema: "#efe4cf", plata: "#b9b9b6", dorado: "#c9a24a", terracota: "#b8603e", moteado: "radial-gradient(circle at 30% 30%, #3a2d24 18%, transparent 20%), radial-gradient(circle at 70% 65%, #3a2d24 16%, transparent 18%), #efe4cf",
+    violeta: "#7d6491", lila: "#b8a6cc", turquesa: "#4f9a99", mostaza: "#c99a2e", tostado: "#a07a52",
   };
+  const list = (v) => String(v || "").split(/[,;\n]/).map((x) => x.trim()).filter(Boolean);
+  const swatch = (name) => THREAD_COLORS[norm(name)] || THREAD_COLORS[norm(name).split(" ")[0]] || "#b9a894";
   const CART_KEY = "vaku-cart-v1";
   const CODE_KEY = "vaku-code-v1";
 
@@ -144,7 +148,8 @@
       else if (k.startsWith("descuento")) map.weeklyPct = Math.max(0, Math.min(90, toNumber(v) || 0));
       else if (k.includes("mercado") || k.includes("alias")) map.alias = v;
       else if (k.startsWith("envio")) map.shipping = v;
-      else if (k.includes("hilo")) map.threads = String(v).split(/[,;]/).map((s) => s.trim()).filter(Boolean);
+      else if (k.includes("hilo") && k.includes("agotad")) map.threadsOut = list(v);
+      else if (k.includes("hilo")) map.threads = list(v);
     });
     return map;
   }
@@ -169,6 +174,8 @@
           soldOut: norm(estado) === "agotado",
           featured: truthy(r.destacado),
           images: [r["foto-1"], r["foto-2"], r["foto-3"]].map(imageUrl).filter(Boolean),
+          colors: list(r["colores-de-la-pieza"] || r["colores"]),
+          colorsOut: list(r["colores-agotados"]).map(norm),
           order: Number.isFinite(toNumber(r.orden)) ? toNumber(r.orden) : 999 + i,
           idx: i,
         };
@@ -276,14 +283,28 @@
 
   /* ---------------- modal de producto ---------------- */
   const modal = $("#modal");
-  let current = null, qty = 1, thread = "";
+  let current = null, qty = 1, thread = "", color = "";
+
+  // Botones de color: los agotados quedan tachados y no se pueden elegir
+  function swatchesHTML(items, outList) {
+    const out = (outList || []).map(norm);
+    return items.map((t) => {
+      const off = out.includes(norm(t));
+      return `<button type="button" data-t="${esc(t)}" style="--sw:${swatch(t)}"${off ? ' disabled aria-disabled="true" title="Agotado"' : ""}><i></i>${esc(t)}${off ? " <small>agotado</small>" : ""}</button>`;
+    }).join("");
+  }
+  function pick(wrapSel, value) {
+    $$(wrapSel + " button").forEach((x) => x.classList.toggle("is-active", x.dataset.t === value));
+  }
 
   function openModal(id) {
     const p = state.products.find((x) => x.id === id);
     if (!p) return;
     current = p; qty = 1;
     const threads = state.settings.threads || [];
-    thread = threads[0] || "";
+    const threadsOut = (state.settings.threadsOut || []).map(norm);
+    thread = threads.find((t) => !threadsOut.includes(norm(t))) || "";
+    color = p.colors.find((c) => !p.colorsOut.includes(norm(c))) || "";
     const imgs = p.images.length ? p.images : ["img/piezas-crudas.webp"];
     $("#modalImg").src = imgs[0];
     $("#modalImg").alt = p.name;
@@ -295,13 +316,17 @@
     const pr = pricing(p);
     $("#modalPrice").innerHTML = priceHTML(p) + (pr.reason === "semana" ? ` <span class="badge badge--sale">Elemento de la semana</span>` : "");
     $("#modalDesc").textContent = p.desc;
+    $("#modalColorWrap").hidden = p.colors.length < 2 || p.soldOut;
+    $("#modalColors").innerHTML = swatchesHTML(p.colors, p.colorsOut);
+    pick("#modalColors", color);
     $("#modalThreadWrap").hidden = !threads.length || p.soldOut;
-    $("#modalThreads").innerHTML = threads.map((t, i) =>
-      `<button type="button" class="${i ? "" : "is-active"}" data-t="${esc(t)}" style="--sw:${THREAD_COLORS[norm(t)] || "#b9a894"}"><i></i>${esc(t)}</button>`).join("");
+    $("#modalThreads").innerHTML = swatchesHTML(threads, threadsOut);
+    pick("#modalThreads", thread);
+    const noColor = p.colors.length > 0 && !color;
     $("#qtyVal").textContent = qty;
     const add = $("#modalAdd");
-    add.disabled = p.soldOut;
-    add.textContent = p.soldOut ? "Agotado" : p.price == null ? "Consultar por WhatsApp" : "Agregar al carrito";
+    add.disabled = p.soldOut || noColor;
+    add.textContent = p.soldOut || noColor ? "Agotado" : p.price == null ? "Consultar por WhatsApp" : "Agregar al carrito";
     $(".modal__actions .qty").hidden = p.soldOut || p.price == null;
     $("#modalStatus").textContent = norm(p.status) === "a pedido" ? "Se hace a pedido: lo modelamos para vos y coordinamos los tiempos por WhatsApp." : "";
     if (typeof modal.showModal === "function") modal.showModal(); else modal.setAttribute("open", "");
@@ -316,9 +341,14 @@
     img.style.animation = "none"; void img.offsetWidth; img.style.animation = "";
   });
   $("#modalThreads").addEventListener("click", (e) => {
-    const b = e.target.closest("button"); if (!b) return;
+    const b = e.target.closest("button"); if (!b || b.disabled) return;
     thread = b.dataset.t;
-    $$("#modalThreads button").forEach((x) => x.classList.toggle("is-active", x === b));
+    pick("#modalThreads", thread);
+  });
+  $("#modalColors").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b || b.disabled) return;
+    color = b.dataset.t;
+    pick("#modalColors", color);
   });
   $("#qtyMinus").addEventListener("click", () => { qty = Math.max(1, qty - 1); $("#qtyVal").textContent = qty; });
   $("#qtyPlus").addEventListener("click", () => { qty = Math.min(20, qty + 1); $("#qtyVal").textContent = qty; });
@@ -330,7 +360,7 @@
       window.open(waLink(`¡Hola VAKU! Quería consultar por el collar ${current.name}.`), "_blank", "noopener");
       return;
     }
-    addToCart(current, qty, thread, e.currentTarget);
+    addToCart(current, qty, thread, color, e.currentTarget);
     closeModal();
   });
 
@@ -346,11 +376,11 @@
       .filter(Boolean);
   }
 
-  function addToCart(p, n, t, fromEl) {
-    const key = p.id + "|" + (t || "");
+  function addToCart(p, n, t, c, fromEl) {
+    const key = p.id + "|" + (c || "") + "|" + (t || "");
     const found = state.cart.find((l) => l.key === key);
     if (found) found.qty = Math.min(20, found.qty + n);
-    else state.cart.push({ key, id: p.id, qty: n, thread: t || "" });
+    else state.cart.push({ key, id: p.id, qty: n, thread: t || "", color: c || "" });
     save(CART_KEY, state.cart);
     flyToCart(fromEl);
     renderCart();
@@ -373,6 +403,10 @@
     ], { duration: 800, easing: "cubic-bezier(.5,0,.3,1)" });
     dot.style.left = "-7px"; dot.style.top = "-7px";
     anim.onfinish = () => { dot.remove(); bump(); };
+  }
+
+  function lineOpts(l) {
+    return [l.color && "Color " + l.color, l.thread && "Hilo " + l.thread].filter(Boolean).join(", ");
   }
 
   function discountFor(subtotal) {
@@ -406,7 +440,7 @@
         <img src="${esc(l.p.images[0] || "img/piezas-crudas.webp")}" alt="" />
         <div>
           <h3>${esc(l.p.name)}</h3>
-          <small>${l.thread ? "Hilo " + esc(l.thread) + " · " : ""}${money(l.unit)} c/u</small>
+          <small>${lineOpts(l) ? esc(lineOpts(l)) + " · " : ""}${money(l.unit)} c/u</small>
           <div class="qty"><button type="button" data-act="minus" aria-label="Menos">−</button><span>${l.qty}</span><button type="button" data-act="plus" aria-label="Más">+</button></div>
         </div>
         <div class="line-item__right">
@@ -486,7 +520,7 @@
     const d = discountFor(subtotal);
     const f = new FormData(checkout);
     const out = ["¡Hola VAKU! Quiero hacer este pedido:", ""];
-    lines.forEach((l) => out.push(`• ${l.p.name}${l.thread ? ` (hilo ${l.thread})` : ""} x${l.qty}: ${money(l.total)}`));
+    lines.forEach((l) => out.push(`• ${l.p.name}${lineOpts(l) ? ` (${lineOpts(l).toLowerCase()})` : ""} x${l.qty}: ${money(l.total)}`));
     out.push("", `Subtotal: ${money(subtotal)}`);
     if (d.amount) out.push(`Código ${d.code.code}: -${money(d.amount)}`);
     out.push(`*Total: ${money(subtotal - d.amount)}*`, "");
