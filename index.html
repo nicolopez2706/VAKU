@@ -29,7 +29,7 @@
   <!-- Barra de anuncios (texto desde la planilla) -->
   <div class="announce" id="announce">
     <div class="announce__track" id="announceTrack">
-      <span>Hecho a mano en Córdoba</span><span>Envíos a todo el país</span><span>Cada pieza es única</span>
+      <span>Hecho a mano en Córdoba</span><span>Envíos en Córdoba Capital</span><span>Cada pieza es única</span>
     </div>
   </div>
 
@@ -242,7 +242,7 @@
       </div>
       <div class="info__item reveal" style="--d:.1s">
         <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 14h24v18H6z"/><path d="M30 20h7l5 6v6H30"/><circle cx="14" cy="35" r="3"/><circle cx="35" cy="35" r="3"/></svg>
-        <h3>Envíos</h3><p id="shippingInfo">Coordinamos el envío por WhatsApp. Retiro sin cargo en Córdoba.</p>
+        <h3>Envíos en Córdoba</h3><p id="shippingInfo">Envíos solo dentro de Córdoba Capital, a coordinar por WhatsApp.</p>
       </div>
       <div class="info__item reveal" style="--d:.2s">
         <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 40C16 28 32 20 40 8"/><path d="M10 12c8 2 18 10 22 26"/></svg>
@@ -287,11 +287,7 @@
       </dl>
       <form class="checkout" id="checkoutForm">
         <input type="text" name="nombre" placeholder="Tu nombre" required aria-label="Tu nombre" />
-        <div class="checkout__opts" role="radiogroup" aria-label="Entrega">
-          <label><input type="radio" name="entrega" value="Envío" checked /> <span>Envío</span></label>
-          <label><input type="radio" name="entrega" value="Retiro en Córdoba" /> <span>Retiro en Córdoba</span></label>
-        </div>
-        <input type="text" name="ciudad" placeholder="Ciudad / localidad" aria-label="Ciudad" />
+        <input type="text" name="barrio" placeholder="Barrio (Córdoba Capital)" aria-label="Barrio" required />
         <textarea name="notas" rows="2" placeholder="¿Algo más? (opcional)" aria-label="Notas"></textarea>
         <p class="checkout__ship" id="shippingCart"></p>
         <button type="submit" class="btn btn--dark btn--full">

@@ -714,6 +714,62 @@ section { position: relative; }
   .hero__ctas .btn { padding: 0.95rem 1.3rem; }
 }
 
+/* ---------- Celular: ajustes finos ---------- */
+@media (max-width: 860px) {
+  body { -webkit-tap-highlight-color: transparent; }
+  .code input, .checkout input[type="text"], .checkout textarea { font-size: 16px; } /* evita el zoom automático en iPhone */
+  .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter) 4px; width: calc(100% + var(--gutter) * 2); }
+  .filters::-webkit-scrollbar { display: none; }
+  .chip { flex: none; }
+  .section-head--row { flex-direction: column; align-items: stretch; gap: 1.2rem; }
+  .elements__grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: 0.8rem; background: none; border: 0; padding: 0 var(--gutter) 0.5rem; scroll-padding: 0 var(--gutter); }
+  .elements__grid::-webkit-scrollbar { display: none; }
+  .element { flex: 0 0 78%; scroll-snap-align: start; border: 1px solid var(--line); border-radius: var(--radius); min-height: 22rem; }
+  .element__icon { margin-bottom: auto; }
+  .elements .section-head::after { content: "Deslizá para ver los cuatro →"; display: block; margin-top: 1rem; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .modal { width: 100%; max-width: 100%; max-height: 92svh; margin: auto 0 0; border-radius: 26px 26px 0 0; }
+  .modal[open] { animation: sheetUp 0.6s var(--ease); }
+  .modal__gallery { padding: 0.6rem 0.6rem 0; }
+  .modal__main { aspect-ratio: 6 / 5; }
+  .modal__thumbs button { width: 54px; height: 54px; }
+  .modal__info { gap: 0.8rem; padding: 1rem 1.25rem 0; }
+  .modal__info h2 { font-size: 2.6rem; }
+  .modal__actions { position: sticky; bottom: 0; background: var(--paper); padding: 0.8rem 0 calc(1rem + env(safe-area-inset-bottom)); margin: 0; border-top: 1px solid var(--line); flex-wrap: nowrap; }
+  .modal__close { position: sticky; top: 0.8rem; margin: 0.8rem 0.8rem -50px auto; }
+  .manifesto { padding-top: 4.5rem; }
+  .manifesto__body { columns: 1; }
+  .collection { padding-top: 4.5rem; }
+  .gallery { padding: 4.5rem 0; }
+  .gallery__track img { height: 250px; }
+  .toast { bottom: calc(1rem + env(safe-area-inset-bottom)); }
+}
+@keyframes sheetUp { from { transform: translateY(100%); } }
+
+@media (max-width: 560px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem 0.75rem; }
+  .card { gap: 0.55rem; }
+  .card__media { border-radius: 14px; }
+  .card__quick, .card__desc, .badge--el { display: none; }
+  .card__badges { top: 0.5rem; left: 0.5rem; gap: 0.3rem; }
+  .badge { font-size: 0.56rem; padding: 0.28rem 0.5rem; letter-spacing: 0.1em; }
+  .card__row { flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+  .card__name { font-size: 1.3rem; }
+  .price { font-size: 0.88rem; }
+  .card:active .card__media img { transform: scale(0.98); }
+  .hero__title { font-size: 4rem; }
+  .hero__lead { font-size: 1rem; }
+  .hero .eyebrow { letter-spacing: 0.14em; font-size: 0.66rem; }
+  .hero__media { height: 112vw; }
+  .ticker { padding: 0.8rem 0; }
+  .weekly h2 { font-size: 3.6rem; }
+  .custom { padding-block: 4rem; }
+  .custom__img { aspect-ratio: 1; }
+  .steps h3 { font-size: 1.3rem; }
+  .footer__logo { width: 70vw; }
+  .drawer__head { padding: 1rem 1.25rem; }
+  .drawer__body, .drawer__foot { padding-inline: 1.25rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
   html { scroll-behavior: auto; }

@@ -478,9 +478,6 @@
   }
 
   const checkout = $("#checkoutForm");
-  checkout.addEventListener("change", () => {
-    checkout.ciudad.hidden = checkout.entrega.value !== "Envío";
-  });
   checkout.addEventListener("submit", (e) => {
     e.preventDefault();
     const lines = cartLines();
@@ -494,8 +491,7 @@
     if (d.amount) out.push(`Código ${d.code.code}: -${money(d.amount)}`);
     out.push(`*Total: ${money(subtotal - d.amount)}*`, "");
     out.push(`Nombre: ${f.get("nombre")}`);
-    const entrega = f.get("entrega");
-    out.push(`Entrega: ${entrega}${entrega === "Envío" && f.get("ciudad") ? ` a ${f.get("ciudad")}` : ""}`);
+    out.push(`Entrega: envío en Córdoba Capital, barrio ${f.get("barrio")} (a coordinar)`);
     if (String(f.get("notas") || "").trim()) out.push(`Notas: ${f.get("notas")}`);
     if (state.settings.alias) out.push("", `(Alias de Mercado Pago: ${state.settings.alias})`);
     if (!state.settings.whatsapp) console.warn("[VAKU] Falta el número de WhatsApp en la pestaña Ajustes de la planilla.");
