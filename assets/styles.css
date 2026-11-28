@@ -102,7 +102,13 @@ h2 em { color: var(--clay); }
   border-radius: inherit;
   transition: transform 0.5s var(--ease);
 }
-.btn:hover::before { transform: translateY(0); }
+.btn:hover::before, .btn:active::before { transform: translateY(0); }
+/* en celulares el "hover" queda pegado después de tocar: ahí el relleno solo se ve mientras se apreta */
+@media (hover: none) {
+  .btn:hover:not(:active)::before { transform: translateY(101%); }
+  .btn--ghost:hover:not(:active), .btn--light:hover:not(:active), .card__quick .btn:hover:not(:active) { color: var(--ink); }
+  .btn--ghost:hover:not(:active) { border-color: var(--ink); }
+}
 .btn--dark { background: var(--ink); color: var(--cream); }
 .btn--ghost { border-color: var(--ink); color: var(--ink); }
 .btn--ghost:hover { color: var(--cream); border-color: var(--clay); }

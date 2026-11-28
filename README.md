@@ -16,7 +16,7 @@ Todo se hace en la planilla **“VAKU – Catálogo de la tienda”** de Google 
 | **Galeria** | Fotos de la sección "Mirá cómo queda VAKU": link de la foto (carpeta de Drive "VAKU – Galería"), descripción y orden. |
 | **Ajustes** | WhatsApp que recibe pedidos, Instagram, texto de la barra de arriba, elemento de la semana y su descuento, colores de hilo e hilos agotados, texto de envíos. |
 
-**Fotos:** subilas a la carpeta de Drive **“VAKU – Fotos de la tienda”**, copiá el vínculo (clic derecho > Compartir > Copiar vínculo) y pegalo en *Foto 1*, *Foto 2* o *Foto 3*. La carpeta y la planilla tienen que seguir compartidas como “Cualquier persona con el vínculo puede ver”, porque así la página puede leerlas.
+**Fotos:** subilas a la carpeta de Drive **“VAKU – Fotos de la tienda”**, copiá el vínculo (clic derecho > Compartir > Copiar vínculo) y pegalo en *Foto 1* a *Foto 10* (Foto 1 es la principal). La carpeta y la planilla tienen que seguir compartidas como “Cualquier persona con el vínculo puede ver”, porque así la página puede leerlas.
 
 **No cambies** los nombres de las pestañas ni la primera fila (los encabezados): la página los usa para encontrar los datos.
 
@@ -28,7 +28,7 @@ El cliente arma el carrito, elige color de hilo, aplica un código, puede pedir 
 
 1. En GitHub, entrá al repositorio > **Settings** > **Pages**.
 2. En *Build and deployment* elegí **Deploy from a branch**, rama **main**, carpeta **/ (root)** y guardá.
-3. En uno o dos minutos la página queda en `https://nicolopez2706.github.io/vaku/`.
+3. En uno o dos minutos la página queda en `https://nicolopez2706.github.io/VAKU/`.
 
 GitHub Pages es gratis para repositorios públicos.
 

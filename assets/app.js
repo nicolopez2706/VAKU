@@ -20,6 +20,7 @@
   };
   const list = (v) => String(v || "").split(/[,;\n]/).map((x) => x.trim()).filter(Boolean);
   const swatch = (name) => THREAD_COLORS[norm(name)] || THREAD_COLORS[norm(name).split(" ")[0]] || "#b9a894";
+  const PLACEHOLDER = "img/piezas-crudas.webp";
   const CART_KEY = "vaku-cart-v1";
   const CODE_KEY = "vaku-code-v1";
 
@@ -90,10 +91,11 @@
   // si una imagen de Drive falla, probamos con la otra URL de Drive
   document.addEventListener("error", (e) => {
     const img = e.target;
-    if (!(img instanceof HTMLImageElement) || img.dataset.fallback) return;
-    const alt = driveFallback(img.src);
-    img.dataset.fallback = "1";
-    if (alt) img.src = alt;
+    if (!(img instanceof HTMLImageElement) || !img.getAttribute("src") || img.dataset.fallback === "2") return;
+    const alt = !img.dataset.fallback && driveFallback(img.src);
+    // si tampoco carga (foto borrada o sin permiso), mostramos una foto genérica en vez de un ícono roto
+    if (alt) { img.dataset.fallback = "1"; img.src = alt; }
+    else { img.dataset.fallback = "2"; img.src = PLACEHOLDER; }
   }, true);
 
   /* CSV robusto (comillas, saltos de línea dentro de celdas) */
@@ -157,7 +159,11 @@
   }
 
   function buildProducts(rows) {
+    // El id sale del nombre (no de la fila), así el carrito guardado no se mezcla si se agregan o mueven filas
+    const seen = {};
+    const makeId = (name) => { const b = slug(name) || "p"; seen[b] = (seen[b] || 0) + 1; return seen[b] > 1 ? `${b}-${seen[b]}` : b; };
     return rows
+      .filter((r) => r.nombre && (r.mostrar === undefined || truthy(r.mostrar)))
       .map((r, i) => {
         const name = r.nombre || "";
         const price = toNumber(r.precio);
@@ -165,8 +171,7 @@
         const el = ELEMENTS.find((e) => norm(e) === norm(r.elemento)) || "";
         const estado = r.estado || "Disponible";
         return {
-          id: (slug(name) || "p") + "-" + i,
-          show: r.mostrar === undefined ? true : truthy(r.mostrar),
+          id: makeId(name),
           name,
           desc: r.descripcion || "",
           price: Number.isFinite(price) && price > 0 ? price : null,
@@ -180,7 +185,6 @@
           idx: i,
         };
       })
-      .filter((p) => p.show && p.name)
       .sort((a, b) => (b.featured - a.featured) || (a.order - b.order) || (a.idx - b.idx));
   }
 
