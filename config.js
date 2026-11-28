@@ -15,5 +15,6 @@ window.VAKU_CONFIG = {
     productos: "Productos",
     codigos: "Codigos",
     ajustes: "Ajustes",
+    galeria: "Galeria",
   },
 };

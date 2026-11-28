@@ -11,8 +11,9 @@ Todo se hace en la planilla **“VAKU – Catálogo de la tienda”** de Google 
 | Pestaña | Para qué sirve |
 |---|---|
 | **Instrucciones** | Guía paso a paso. |
-| **Productos** | Un collar por fila: nombre, descripción, precio, precio oferta, elemento, estado, fotos, colores de la pieza y colores agotados. |
+| **Productos** | Un collar por fila: nombre, descripción, precio, precio oferta, elemento, estado y hasta 10 fotos. Cada pieza se vende tal cual se ve: el cliente solo elige el color de hilo. |
 | **Codigos** | Códigos de descuento: porcentaje o monto fijo, compra mínima y vencimiento. |
+| **Galeria** | Fotos de la sección "Mirá cómo queda VAKU": link de la foto (carpeta de Drive "VAKU – Galería"), descripción y orden. |
 | **Ajustes** | WhatsApp que recibe pedidos, Instagram, texto de la barra de arriba, elemento de la semana y su descuento, colores de hilo e hilos agotados, texto de envíos. |
 
 **Fotos:** subilas a la carpeta de Drive **“VAKU – Fotos de la tienda”**, copiá el vínculo (clic derecho > Compartir > Copiar vínculo) y pegalo en *Foto 1*, *Foto 2* o *Foto 3*. La carpeta y la planilla tienen que seguir compartidas como “Cualquier persona con el vínculo puede ver”, porque así la página puede leerlas.
@@ -21,7 +22,7 @@ Todo se hace en la planilla **“VAKU – Catálogo de la tienda”** de Google 
 
 ## Cómo funciona el pedido
 
-El cliente arma el carrito, elige color de hilo, aplica un código y toca **Enviar pedido por WhatsApp**. Se abre WhatsApp con el pedido escrito (productos, total, nombre, entrega) dirigido al número de la pestaña *Ajustes*. El pago y el envío se coordinan por ahí.
+El cliente arma el carrito, elige color de hilo, aplica un código, puede pedir una foto de cómo queda con ese hilo y toca **Enviar pedido por WhatsApp**. Se abre WhatsApp con el pedido escrito (productos, total, nombre, entrega) dirigido al número de la pestaña *Ajustes*. El pago y el envío se coordinan por ahí.
 
 ## Publicar con GitHub Pages (una sola vez)
 

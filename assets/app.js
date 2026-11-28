@@ -7,14 +7,16 @@
   "use strict";
 
   const CFG = window.VAKU_CONFIG || {};
-  const TABS = Object.assign({ productos: "Productos", codigos: "Codigos", ajustes: "Ajustes" }, CFG.tabs || {});
+  const TABS = Object.assign({ productos: "Productos", codigos: "Codigos", ajustes: "Ajustes", galeria: "Galeria" }, CFG.tabs || {});
+  const PAGE = 12; // collares que se muestran antes de "Ver más"
   const ELEMENTS = ["Fuego", "Agua", "Aire", "Tierra"];
   const THREAD_COLORS = {
-    negro: "#1d1a18", marron: "#6b4a33", suela: "#b07a4a", rojo: "#b3352c", natural: "#e3d6c2",
-    blanco: "#f4f1ec", beige: "#d9c6a8", gris: "#8a8a86", verde: "#5f7552", azul: "#3f5873",
+    negro: "#1c1a1a", "marron chocolate": "#3f2a20", "marron dulce de leche": "#b67a3c", "marron tierra": "#7a5137",
+    beige: "#e7dcc8", gris: "#9d9c99", violeta: "#8a63b6", azul: "#2350c9", rojo: "#c0332b",
+    marron: "#6b4a33", suela: "#b07a4a", natural: "#e7dcc8", blanco: "#f4f1ec", verde: "#5f7552",
     celeste: "#8fb3c9", amarillo: "#e2b23a", naranja: "#d77a3a", rosa: "#d99aa3", bordo: "#6e1f2a",
     crema: "#efe4cf", plata: "#b9b9b6", dorado: "#c9a24a", terracota: "#b8603e", moteado: "radial-gradient(circle at 30% 30%, #3a2d24 18%, transparent 20%), radial-gradient(circle at 70% 65%, #3a2d24 16%, transparent 18%), #efe4cf",
-    violeta: "#7d6491", lila: "#b8a6cc", turquesa: "#4f9a99", mostaza: "#c99a2e", tostado: "#a07a52",
+    lila: "#b8a6cc", turquesa: "#4f9a99", mostaza: "#c99a2e", tostado: "#a07a52",
   };
   const list = (v) => String(v || "").split(/[,;\n]/).map((x) => x.trim()).filter(Boolean);
   const swatch = (name) => THREAD_COLORS[norm(name)] || THREAD_COLORS[norm(name).split(" ")[0]] || "#b9a894";
@@ -163,7 +165,7 @@
         const el = ELEMENTS.find((e) => norm(e) === norm(r.elemento)) || "";
         const estado = r.estado || "Disponible";
         return {
-          id: slug(name) || "p" + i,
+          id: (slug(name) || "p") + "-" + i,
           show: r.mostrar === undefined ? true : truthy(r.mostrar),
           name,
           desc: r.descripcion || "",
@@ -173,9 +175,7 @@
           status: estado,
           soldOut: norm(estado) === "agotado",
           featured: truthy(r.destacado),
-          images: [r["foto-1"], r["foto-2"], r["foto-3"]].map(imageUrl).filter(Boolean),
-          colors: list(r["colores-de-la-pieza"] || r["colores"]),
-          colorsOut: list(r["colores-agotados"]).map(norm),
+          images: Array.from({ length: 10 }, (_, n) => imageUrl(r["foto-" + (n + 1)])).filter(Boolean),
           order: Number.isFinite(toNumber(r.orden)) ? toNumber(r.orden) : 999 + i,
           idx: i,
         };
@@ -220,10 +220,17 @@
   /* ---------------- render: colección ---------------- */
   const grid = $("#grid");
 
-  function renderGrid() {
-    const list = state.products.filter((p) => state.filter === "all" || p.element === state.filter);
-    $("#gridEmpty").hidden = list.length > 0;
-    grid.innerHTML = list.map((p, i) => {
+  function renderGrid(keep) {
+    const all = state.products.filter((p) => state.filter === "all" || p.element === state.filter);
+    if (!keep) state.shown = PAGE;
+    const list = all.slice(0, state.shown);
+    $("#gridEmpty").hidden = all.length > 0;
+    const more = $("#gridMore");
+    more.hidden = all.length <= list.length;
+    more.textContent = `Ver más collares (${all.length - list.length})`;
+    const start = keep ? grid.querySelectorAll(".card:not(.card--skeleton)").length : 0;
+    const html = list.slice(start).map((p, j) => {
+      const i = j;
       const pr = pricing(p);
       const badges = [];
       if (p.soldOut) badges.push(`<span class="badge badge--soldout">Agotado</span>`);
@@ -248,11 +255,13 @@
           <p class="card__desc">${esc(p.desc)}</p>
         </article>`;
     }).join("");
+    if (keep) grid.insertAdjacentHTML("beforeend", html); else grid.innerHTML = html;
     observeCards();
   }
+  $("#gridMore").addEventListener("click", () => { state.shown += PAGE; renderGrid(true); });
 
   function observeCards() {
-    const cards = $$(".card:not(.card--skeleton)", grid);
+    const cards = $$(".card:not(.card--skeleton):not(.is-in)", grid);
     if (reduceMotion || !("IntersectionObserver" in window)) { cards.forEach((c) => c.classList.add("is-in")); return; }
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
@@ -283,7 +292,7 @@
 
   /* ---------------- modal de producto ---------------- */
   const modal = $("#modal");
-  let current = null, qty = 1, thread = "", color = "";
+  let current = null, qty = 1, thread = "", imgs = [], imgIdx = 0;
 
   // Botones de color: los agotados quedan tachados y no se pueden elegir
   function swatchesHTML(items, outList) {
@@ -304,51 +313,63 @@
     const threads = state.settings.threads || [];
     const threadsOut = (state.settings.threadsOut || []).map(norm);
     thread = threads.find((t) => !threadsOut.includes(norm(t))) || "";
-    color = p.colors.find((c) => !p.colorsOut.includes(norm(c))) || "";
-    const imgs = p.images.length ? p.images : ["img/piezas-crudas.webp"];
-    $("#modalImg").src = imgs[0];
+    imgs = p.images.length ? p.images : ["img/piezas-crudas.webp"];
     $("#modalImg").alt = p.name;
     $("#modalThumbs").innerHTML = imgs.length > 1
-      ? imgs.map((src, i) => `<button type="button" class="${i ? "" : "is-active"}" data-src="${esc(src)}" aria-label="Foto ${i + 1}"><img src="${esc(src)}" alt="" /></button>`).join("")
+      ? imgs.map((src, i) => `<button type="button" data-i="${i}" aria-label="Foto ${i + 1}"><img src="${esc(src)}" alt="" loading="lazy" /></button>`).join("")
       : "";
+    $$(".modal__nav").forEach((b) => { b.hidden = imgs.length < 2; });
+    showImg(0);
     $("#modalEl").textContent = [p.element, p.status].filter(Boolean).join(" · ");
     $("#modalTitle").textContent = p.name;
     const pr = pricing(p);
     $("#modalPrice").innerHTML = priceHTML(p) + (pr.reason === "semana" ? ` <span class="badge badge--sale">Elemento de la semana</span>` : "");
     $("#modalDesc").textContent = p.desc;
-    $("#modalColorWrap").hidden = p.colors.length < 2 || p.soldOut;
-    $("#modalColors").innerHTML = swatchesHTML(p.colors, p.colorsOut);
-    pick("#modalColors", color);
     $("#modalThreadWrap").hidden = !threads.length || p.soldOut;
     $("#modalThreads").innerHTML = swatchesHTML(threads, threadsOut);
     pick("#modalThreads", thread);
-    const noColor = p.colors.length > 0 && !color;
     $("#qtyVal").textContent = qty;
     const add = $("#modalAdd");
-    add.disabled = p.soldOut || noColor;
-    add.textContent = p.soldOut || noColor ? "Agotado" : p.price == null ? "Consultar por WhatsApp" : "Agregar al carrito";
+    add.disabled = p.soldOut;
+    add.textContent = p.soldOut ? "Agotado" : p.price == null ? "Consultar por WhatsApp" : "Agregar al carrito";
     $(".modal__actions .qty").hidden = p.soldOut || p.price == null;
     $("#modalStatus").textContent = norm(p.status) === "a pedido" ? "Se hace a pedido: lo modelamos para vos y coordinamos los tiempos por WhatsApp." : "";
     if (typeof modal.showModal === "function") modal.showModal(); else modal.setAttribute("open", "");
   }
   function closeModal() { if (modal.open) modal.close(); }
 
-  $("#modalThumbs").addEventListener("click", (e) => {
-    const b = e.target.closest("button"); if (!b) return;
-    $$("#modalThumbs button").forEach((x) => x.classList.toggle("is-active", x === b));
+  function showImg(i) {
+    imgIdx = (i + imgs.length) % imgs.length;
     const img = $("#modalImg");
-    img.src = b.dataset.src;
+    img.src = imgs[imgIdx];
     img.style.animation = "none"; void img.offsetWidth; img.style.animation = "";
+    $$("#modalThumbs button").forEach((x, n) => x.classList.toggle("is-active", n === imgIdx));
+    const t = $$("#modalThumbs button")[imgIdx];
+    if (t) t.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    $("#modalCount").textContent = imgs.length > 1 ? `${imgIdx + 1} / ${imgs.length}` : "";
+  }
+  $("#modalThumbs").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (b) showImg(+b.dataset.i);
   });
+  $("#modalPrev").addEventListener("click", () => showImg(imgIdx - 1));
+  $("#modalNext").addEventListener("click", () => showImg(imgIdx + 1));
+  swipe($(".modal__main"), (dir) => imgs.length > 1 && showImg(imgIdx + dir));
+
+  // Deslizar con el dedo: llama a cb(1) o cb(-1)
+  function swipe(el, cb) {
+    let x0 = null, y0 = 0;
+    el.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    el.addEventListener("touchend", (e) => {
+      if (x0 == null) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) cb(dx < 0 ? 1 : -1);
+      x0 = null;
+    }, { passive: true });
+  }
   $("#modalThreads").addEventListener("click", (e) => {
     const b = e.target.closest("button"); if (!b || b.disabled) return;
     thread = b.dataset.t;
     pick("#modalThreads", thread);
-  });
-  $("#modalColors").addEventListener("click", (e) => {
-    const b = e.target.closest("button"); if (!b || b.disabled) return;
-    color = b.dataset.t;
-    pick("#modalColors", color);
   });
   $("#qtyMinus").addEventListener("click", () => { qty = Math.max(1, qty - 1); $("#qtyVal").textContent = qty; });
   $("#qtyPlus").addEventListener("click", () => { qty = Math.min(20, qty + 1); $("#qtyVal").textContent = qty; });
@@ -360,7 +381,7 @@
       window.open(waLink(`¡Hola VAKU! Quería consultar por el collar ${current.name}.`), "_blank", "noopener");
       return;
     }
-    addToCart(current, qty, thread, color, e.currentTarget);
+    addToCart(current, qty, thread, "", e.currentTarget);
     closeModal();
   });
 
@@ -527,6 +548,7 @@
     out.push(`Nombre: ${f.get("nombre")}`);
     out.push(`Entrega: envío en Córdoba Capital, barrio ${f.get("barrio")} (a coordinar)`);
     if (String(f.get("notas") || "").trim()) out.push(`Notas: ${f.get("notas")}`);
+    if (f.get("foto")) out.push("", "Antes de confirmar, quiero ver una foto de cómo queda el collar con el hilo elegido.");
     if (state.settings.alias) out.push("", `(Alias de Mercado Pago: ${state.settings.alias})`);
     if (!state.settings.whatsapp) console.warn("[VAKU] Falta el número de WhatsApp en la pestaña Ajustes de la planilla.");
     window.open(waLink(out.join("\n")), "_blank", "noopener");
@@ -668,6 +690,71 @@
 
   $("#year").textContent = new Date().getFullYear();
 
+  /* ---------------- galería "Mirá cómo queda" ---------------- */
+  const LOOK_PAGE = 9;
+  let lookShown = LOOK_PAGE, lbIdx = 0;
+  function buildGallery(rows) {
+    return rows
+      .map((r, i) => ({
+        show: r.mostrar === undefined ? true : truthy(r.mostrar),
+        src: imageUrl(r.foto),
+        text: r.descripcion || "",
+        order: Number.isFinite(toNumber(r.orden)) ? toNumber(r.orden) : 999 + i,
+        idx: i,
+      }))
+      .filter((g) => g.show && g.src)
+      .sort((a, b) => (a.order - b.order) || (a.idx - b.idx));
+  }
+  function renderLookbook() {
+    const items = state.gallery || [];
+    $("#galeria").hidden = !items.length;
+    const shown = items.slice(0, lookShown);
+    $("#lookGrid").innerHTML = shown.map((g, i) => `
+      <figure class="look reveal" style="--d:${(i % 3) * 0.08}s" data-i="${i}" tabindex="0" role="button" aria-label="Ampliar foto">
+        <img src="${esc(g.src)}" alt="${esc(g.text || "Collar VAKU")}" loading="lazy" />
+        ${g.text ? `<figcaption>${esc(g.text)}</figcaption>` : ""}
+      </figure>`).join("");
+    const more = $("#lookMore");
+    more.hidden = items.length <= shown.length;
+    more.textContent = `Ver más fotos (${items.length - shown.length})`;
+    observeReveals();
+  }
+  $("#lookMore").addEventListener("click", () => { lookShown += LOOK_PAGE * 2; renderLookbook(); });
+  const lb = $("#lightbox");
+  function openLight(i) {
+    lbIdx = i;
+    showLight();
+    if (typeof lb.showModal === "function") lb.showModal(); else lb.setAttribute("open", "");
+  }
+  function showLight() {
+    const items = state.gallery || [];
+    lbIdx = (lbIdx + items.length) % items.length;
+    const g = items[lbIdx];
+    const img = $("#lbImg");
+    img.src = g.src; img.alt = g.text || "Collar VAKU";
+    img.style.animation = "none"; void img.offsetWidth; img.style.animation = "";
+    $("#lbText").textContent = g.text;
+    $("#lbCount").textContent = `${lbIdx + 1} / ${items.length}`;
+  }
+  $("#lookGrid").addEventListener("click", (e) => { const f = e.target.closest(".look"); if (f) openLight(+f.dataset.i); });
+  $("#lookGrid").addEventListener("keydown", (e) => {
+    const f = e.target.closest(".look");
+    if (f && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openLight(+f.dataset.i); }
+  });
+  $("#lbPrev").addEventListener("click", () => { lbIdx--; showLight(); });
+  $("#lbNext").addEventListener("click", () => { lbIdx++; showLight(); });
+  $("#lbClose").addEventListener("click", () => lb.close());
+  lb.addEventListener("click", (e) => { if (e.target === lb || e.target.classList.contains("lightbox__stage")) lb.close(); });
+  lb.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") { lbIdx--; showLight(); }
+    if (e.key === "ArrowRight") { lbIdx++; showLight(); }
+  });
+  swipe(lb, (dir) => { lbIdx += dir; showLight(); });
+  modal.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft" && imgs.length > 1) showImg(imgIdx - 1);
+    if (e.key === "ArrowRight" && imgs.length > 1) showImg(imgIdx + 1);
+  });
+
   /* ---------------- inicio ---------------- */
   function intro() {
     const loader = $("#loader");
@@ -688,18 +775,21 @@
     onFrame();
     renderCart();
 
-    const [prod, codes, settings] = await Promise.all([
+    const [prod, codes, settings, gallery] = await Promise.all([
       fetchTab(TABS.productos, "data/productos.csv"),
       fetchTab(TABS.codigos, "data/codigos.csv").catch(() => ({ rows: [] })),
       fetchTab(TABS.ajustes, "data/ajustes.csv").catch(() => ({ rows: [] })),
-    ]).catch((err) => { console.error(err); return [{ rows: [] }, { rows: [] }, { rows: [] }]; });
+      fetchTab(TABS.galeria, "data/galeria.csv").catch(() => ({ rows: [] })),
+    ]).catch((err) => { console.error(err); return [{ rows: [] }, { rows: [] }, { rows: [] }, { rows: [] }]; });
 
     state.settings = buildSettings(settings.rows);
     state.products = buildProducts(prod.rows);
     state.codes = buildCodes(codes.rows);
     document.documentElement.dataset.source = prod.source || "none";
+    state.gallery = buildGallery(gallery.rows);
     applySettings();
     renderGrid();
+    renderLookbook();
     renderCart();
   }
 

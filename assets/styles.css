@@ -621,7 +621,8 @@ section { position: relative; }
 .modal[open] { animation: modalIn 0.6s var(--ease); }
 @keyframes modalIn { from { opacity: 0; transform: translateY(30px) scale(0.98); } }
 .modal__close { position: absolute; top: 1rem; right: 1rem; z-index: 3; background: var(--paper); }
-.modal__grid { display: grid; grid-template-columns: 1.1fr 1fr; }
+.modal__grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+.modal__gallery, .modal__info { min-width: 0; }
 .modal__gallery { padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; }
 .modal__main { aspect-ratio: 4/5; border-radius: var(--radius); overflow: hidden; background: var(--sand); }
 .modal__main img { width: 100%; height: 100%; object-fit: cover; animation: fadeIn 0.5s var(--ease); }
@@ -696,7 +697,7 @@ section { position: relative; }
   .hero__scroll { display: none; }
   .manifesto__grid, .custom { grid-template-columns: 1fr; }
   .manifesto__img { max-width: 440px; }
-  .modal__grid { grid-template-columns: 1fr; }
+  .modal__grid { grid-template-columns: minmax(0, 1fr); }
   .modal__info { padding-top: 0.5rem; }
   .info { grid-template-columns: 1fr; }
   .footer__claim { text-align: left; }
@@ -770,6 +771,77 @@ section { position: relative; }
   .footer__logo { width: 70vw; }
   .drawer__head { padding: 1rem 1.25rem; }
   .drawer__body, .drawer__foot { padding-inline: 1.25rem; }
+}
+
+/* ---------- Ver más ---------- */
+.grid__foot { display: flex; justify-content: center; padding: 3rem var(--gutter) 0; }
+
+/* ---------- Galería "Mirá cómo queda" ---------- */
+.lookbook { padding: clamp(4.5rem, 9vw, 8rem) var(--gutter); }
+.lookbook .section-head { padding: 0; }
+.lookbook__lead { color: var(--muted); max-width: 36rem; margin: 1.2rem auto 0; }
+.lookbook__grid { columns: 3 260px; column-gap: 1rem; }
+.look { position: relative; margin: 0 0 1rem; break-inside: avoid; border-radius: var(--radius); overflow: hidden; cursor: zoom-in; background: var(--sand); }
+.look img { width: 100%; height: auto; min-height: 120px; transition: transform 1.2s var(--ease), filter 0.6s; }
+.look:hover img { transform: scale(1.05); }
+.look figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 2.4rem 1rem 0.9rem;
+  background: linear-gradient(transparent, rgba(30, 24, 20, 0.72));
+  color: var(--cream); font-size: 0.85rem; line-height: 1.35;
+  transform: translateY(100%); transition: transform 0.6s var(--ease);
+}
+.look:hover figcaption, .look:focus-visible figcaption { transform: none; }
+.lookbook__foot { display: flex; flex-direction: column; align-items: center; gap: 1.6rem; margin-top: 2.5rem; font-size: 0.85rem; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* ---------- Visor ---------- */
+.lightbox { border: 0; padding: 0; margin: 0; width: 100vw; height: 100svh; max-width: none; max-height: none; background: rgba(24, 19, 16, 0.94); color: var(--cream); }
+.lightbox::backdrop { background: transparent; }
+.lightbox[open] { display: block; animation: fadeIn 0.4s var(--ease); }
+.lightbox__stage { position: absolute; inset: 0; display: grid; place-items: center; padding: 64px 72px 96px; }
+.lightbox__stage img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; animation: fadeIn 0.45s var(--ease); }
+.lightbox__close { position: absolute; top: 1rem; right: 1rem; border-color: rgba(255, 255, 255, 0.3); color: var(--cream); }
+.lightbox__close:hover { background: rgba(255, 255, 255, 0.12); }
+.lightbox__nav, .modal__nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35); background: rgba(24, 19, 16, 0.35);
+  color: #fff; font-size: 1.8rem; line-height: 1; display: grid; place-items: center; padding-bottom: 4px;
+  backdrop-filter: blur(6px); transition: background 0.3s;
+}
+.lightbox__nav:hover, .modal__nav:hover { background: rgba(24, 19, 16, 0.6); }
+.lightbox__nav--prev { left: 1rem; } .lightbox__nav--next { right: 1rem; }
+.lightbox__bar { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom)); font-size: 0.9rem; }
+.lightbox__bar p { margin: 0; }
+.lightbox__bar span { opacity: 0.7; font-size: 0.78rem; letter-spacing: 0.1em; white-space: nowrap; }
+
+/* ---------- Fotos del collar ---------- */
+.modal__main { position: relative; }
+.modal__nav { width: 40px; height: 40px; font-size: 1.5rem; }
+.modal__nav--prev { left: 0.7rem; } .modal__nav--next { right: 0.7rem; }
+.modal__count { position: absolute; bottom: 0.7rem; right: 0.8rem; background: rgba(24, 19, 16, 0.55); color: #fff; font-size: 0.72rem; letter-spacing: 0.08em; padding: 0.25rem 0.6rem; border-radius: 999px; }
+.modal__count:empty { display: none; }
+.modal__thumbs { overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.modal__thumbs::-webkit-scrollbar { display: none; }
+.modal__thumbs button { flex: none; }
+
+/* ---------- Casilla "quiero ver una foto" ---------- */
+.check { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.88rem; line-height: 1.4; cursor: pointer; padding: 0.8rem 0.9rem; border: 1px solid var(--line); border-radius: 12px; background: var(--cream); }
+.check input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.check__box { flex: none; width: 20px; height: 20px; border: 1.5px solid var(--ink); border-radius: 6px; display: grid; place-items: center; transition: background 0.25s; margin-top: 1px; }
+.check__box::after { content: ""; width: 10px; height: 6px; border-left: 2px solid var(--cream); border-bottom: 2px solid var(--cream); transform: rotate(-45deg) translate(1px, -1px) scale(0); transition: transform 0.25s var(--ease); }
+.check input:checked + .check__box { background: var(--ink); }
+.check input:checked + .check__box::after { transform: rotate(-45deg) translate(1px, -1px) scale(1); }
+.check input:focus-visible + .check__box { outline: 2px solid var(--clay); outline-offset: 2px; }
+
+@media (max-width: 860px) {
+  .lookbook__grid { columns: 2; column-gap: 0.6rem; }
+  .look { margin-bottom: 0.6rem; border-radius: 12px; }
+  .look figcaption { transform: none; font-size: 0.72rem; padding: 1.8rem 0.6rem 0.55rem; }
+  .lightbox__stage { padding: 56px 0 92px; }
+  .lightbox__stage img { border-radius: 0; }
+  .lightbox__nav { top: auto; bottom: calc(4.2rem + env(safe-area-inset-bottom)); transform: none; width: 42px; height: 42px; }
+  .modal__nav { width: 36px; height: 36px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
