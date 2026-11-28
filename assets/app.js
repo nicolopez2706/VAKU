@@ -691,8 +691,7 @@
   $("#year").textContent = new Date().getFullYear();
 
   /* ---------------- galería "Mirá cómo queda" ---------------- */
-  const LOOK_PAGE = 9;
-  let lookShown = LOOK_PAGE, lbIdx = 0;
+  let lbIdx = 0;
   function buildGallery(rows) {
     return rows
       .map((r, i) => ({
@@ -705,21 +704,111 @@
       .filter((g) => g.show && g.src)
       .sort((a, b) => (a.order - b.order) || (a.idx - b.idx));
   }
+  // Galería en filas que se desplazan solas (se pueden arrastrar; se frenan al pasar el mouse)
+  const ASPECTS = ["4 / 5", "1 / 1", "3 / 4", "5 / 4", "4 / 5", "2 / 3"];
+  let rows = [], lookRaf = 0, lookVisible = false, lastT = 0, lastScroll = window.scrollY, boost = 0;
+  function lookCard(g, i, k, clone) {
+    return `<figure class="look" data-i="${i}" style="--ar:${ASPECTS[k % ASPECTS.length]}" tabindex="${clone ? -1 : 0}" role="button" aria-label="Ampliar foto"${clone ? ' aria-hidden="true"' : ""}>
+        <img src="${esc(g.src)}" alt="${esc(g.text || "Collar VAKU")}" loading="lazy" draggable="false" />
+        ${g.text ? `<figcaption>${esc(g.text)}</figcaption>` : ""}
+      </figure>`;
+  }
   function renderLookbook() {
     const items = state.gallery || [];
     $("#galeria").hidden = !items.length;
-    const shown = items.slice(0, lookShown);
-    $("#lookGrid").innerHTML = shown.map((g, i) => `
-      <figure class="look reveal" style="--d:${(i % 3) * 0.08}s" data-i="${i}" tabindex="0" role="button" aria-label="Ampliar foto">
-        <img src="${esc(g.src)}" alt="${esc(g.text || "Collar VAKU")}" loading="lazy" />
-        ${g.text ? `<figcaption>${esc(g.text)}</figcaption>` : ""}
-      </figure>`).join("");
-    const more = $("#lookMore");
-    more.hidden = items.length <= shown.length;
-    more.textContent = `Ver más fotos (${items.length - shown.length})`;
+    const mobile = window.matchMedia("(max-width: 560px)").matches;
+    const nRows = items.length < 5 ? 1 : (items.length < 12 || mobile ? 2 : 3);
+    const groups = Array.from({ length: nRows }, () => []);
+    items.forEach((g, i) => groups[i % nRows].push(i));
+    $("#lookGrid").innerHTML = groups.map((idxs, r) => {
+      // Repetimos hasta cubrir la pantalla y duplicamos el bloque para que el loop no tenga cortes
+      let set = idxs.slice();
+      if (!reduceMotion) while (set.length < 7) set = set.concat(idxs);
+      const one = set.map((i, k) => lookCard(items[i], i, k + r * 2, k >= idxs.length)).join("");
+      const two = reduceMotion ? "" : set.map((i, k) => lookCard(items[i], i, k + r * 2, true)).join("");
+      return `<div class="look-row reveal" style="--d:${r * 0.12}s"><div class="look-track">${one}${two}</div></div>`;
+    }).join("");
+    rows = $$("#lookGrid .look-row").map((el, r) => ({
+      el, track: el.firstElementChild, x: 0, half: 0, fling: 0,
+      dir: r % 2 ? 1 : -1, speed: 30 + r * 8, cur: 1, target: 1, drag: null, moved: false,
+    }));
+    rows.forEach(bindRow);
+    measureRows();
+    $$("#lookGrid img").forEach((img) => img.addEventListener("load", measureRows, { once: true }));
     observeReveals();
+    startLook();
   }
-  $("#lookMore").addEventListener("click", () => { lookShown += LOOK_PAGE * 2; renderLookbook(); });
+  function measureRows() {
+    rows.forEach((row) => { row.half = reduceMotion ? 0 : row.track.scrollWidth / 2; place(row); });
+  }
+  function place(row) {
+    if (!row.half) return;
+    // x siempre dentro de [-half, 0): al pasar el borde vuelve sin que se note
+    row.x = ((row.x % row.half) - row.half) % row.half;
+    row.track.style.transform = `translate3d(${row.x.toFixed(2)}px,0,0)`;
+  }
+  function bindRow(row) {
+    const el = row.el;
+    el.addEventListener("mouseenter", () => { row.target = 0.12; });
+    el.addEventListener("mouseleave", () => { row.target = 1; });
+    if (reduceMotion) return;
+    el.addEventListener("pointerdown", (e) => {
+      if (e.button) return;
+      row.drag = { x0: e.clientX, y0: e.clientY, start: row.x, id: e.pointerId, last: e.clientX, t: performance.now(), v: 0 };
+      row.moved = false; row.fling = 0;
+    });
+    el.addEventListener("pointermove", (e) => {
+      const d = row.drag; if (!d || d.id !== e.pointerId) return;
+      const dx = e.clientX - d.x0;
+      if (!row.moved && Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(e.clientY - d.y0)) {
+        row.moved = true; el.classList.add("is-drag");
+        try { el.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+      if (row.moved) {
+        const now = performance.now();
+        d.v = (e.clientX - d.last) / Math.max(1, now - d.t) * 1000;
+        d.last = e.clientX; d.t = now;
+        row.x = d.start + dx; place(row);
+      }
+    });
+    const end = (e) => {
+      const d = row.drag; if (!d || d.id !== e.pointerId) return;
+      if (row.moved) row.fling = Math.max(-2500, Math.min(2500, d.v));
+      row.drag = null; el.classList.remove("is-drag");
+      if (e.pointerType !== "mouse") row.target = 1;
+    };
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+    // si fue un arrastre, no abrir la foto
+    el.addEventListener("click", (e) => { if (row.moved) { e.stopPropagation(); e.preventDefault(); row.moved = false; } }, true);
+  }
+  function lookTick(t) {
+    lookRaf = 0;
+    if (!lookVisible || reduceMotion || document.hidden) return;
+    const dt = Math.min(0.05, (t - (lastT || t)) / 1000); lastT = t;
+    const sy = window.scrollY; boost += Math.abs(sy - lastScroll) * 0.9; lastScroll = sy;
+    boost *= 0.9; // al scrollear la página, las filas aceleran un poco
+    rows.forEach((row) => {
+      if (row.drag && row.moved) return;
+      row.cur += (row.target - row.cur) * 0.06;
+      row.x += (row.dir * (row.speed * row.cur + Math.min(boost, 400)) + row.fling) * dt;
+      row.fling = Math.abs(row.fling) < 5 ? 0 : row.fling * 0.94;
+      place(row);
+    });
+    lookRaf = requestAnimationFrame(lookTick);
+  }
+  function startLook() {
+    if (!lookRaf && lookVisible && !reduceMotion) { lastT = 0; lastScroll = window.scrollY; lookRaf = requestAnimationFrame(lookTick); }
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((es) => { lookVisible = es[0].isIntersecting; startLook(); }, { rootMargin: "120px" }).observe($("#galeria"));
+  } else lookVisible = true;
+  document.addEventListener("visibilitychange", startLook);
+  let lookW = window.innerWidth;
+  window.addEventListener("resize", () => {
+    if (Math.abs(window.innerWidth - lookW) < 40) return measureRows();
+    lookW = window.innerWidth; if (state.gallery) renderLookbook();
+  });
   const lb = $("#lightbox");
   function openLight(i) {
     lbIdx = i;
